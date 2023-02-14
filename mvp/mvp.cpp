@@ -2,19 +2,23 @@
 #include <string>
 #include <unordered_map>
 
-// define some constants
-std::unordered_map<std::string, std::string> playerActions ({
-    {"pause", "pause"}, 
-    {"play", "play"}
-});
-
 void print(std::string);
 
 int main() {
-    print("Begin ECE180D MVP");
+    // define game variables
+    std::unordered_map<char, std::string> playerActions = {
+        {'c', "continue"},
+        {'p', "pause"},
+        {'q', "topLeftSwipe"},
+        {'w', "topRightSwipe"},
+        {'a', "bottomLeftSwipe"},
+        {'s', "bottomRightSwipe"}
+    };
 
-    for (auto [key, val] : playerActions)
+    for (const auto [key, val] : playerActions)
         print(val);
+
+    return 0;
 }
 
 void print(std::string output) {
