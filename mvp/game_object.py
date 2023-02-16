@@ -7,6 +7,7 @@ import random as r
 import multiprocessing as mp
 from threading import Thread
 import sys
+import time
 
 global user_input
 active = True
@@ -28,13 +29,11 @@ class GameObject():
         self.timer = None
 
         self.player_actions = {
-            'p':'pause',
-            'c':'continue',
-            'q':'top',
-            'a':'middle',
-            'z':'bottom',
-            'j':'vertical',
-            'k':'horizontal'
+            'q':Location.TOP.value,
+            'a':Location.MIDDLE.value,
+            'z':Location.BOTTOM.value,
+            'j':Motion.VERTICAL.value,
+            'k':Motion.HORIZONTAL.value
         }
 
         self.blocks = {
@@ -46,16 +45,15 @@ class GameObject():
 
     def set_difficulty(self):
         while self.difficulty is None:
-            difficulty = input(f'Choose Difficulty from 3 (Easy) to 1 (Hard): ')
-            if difficulty.isdigit() and int(difficulty) <= 3:
+            difficulty = input(f'Choose Difficulty from 10 (Easy) to 1 (Hard): ')
+            if difficulty.isdigit() and int(difficulty) <= 10:
                 self.difficulty = int(difficulty)
             else:
                 print(f'Choice {difficulty} is invalid')
 
     def play(self):
         while self.player_lives > 0:
-            global user_input
-            global active
+            global user_input, active
             user_input = None
             
             if active is True:
@@ -69,11 +67,16 @@ class GameObject():
                 p.start()
                 p.join(self.difficulty)
                 
-                print(f'\nReceived user input: {user_input}')
-                if user_input is None:
+                print(f'USER INPUT {user_input}')
+                if user_input is None or len(user_input) > 2:
                     print(f'\nWrong Action {user_input}! Decrement Life :(')
                     print(f'press any key to continue')
                     self.player_lives -= 1
+                else:
+                    if self.player_actions[user_input[0]] == location and self.player_actions[user_input[1]] == motion:
+                        print(f'\nNicely Done! Score Incremented')
+                        self.player_score += 1
+                        time.sleep(4)
 
 
 
