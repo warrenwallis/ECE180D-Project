@@ -4,6 +4,12 @@ Game Object designed to hold all game variables
 
 from enum import Enum
 import random as r
+import multiprocessing as mp
+from threading import Thread
+import sys
+
+global user_input
+active = True
 
 class Location(Enum):
     TOP = 1
@@ -15,10 +21,11 @@ class Motion(Enum):
 
 class GameObject():
     def __init__(self):
-        self.active = True
         self.player_lives = 3
         self.difficulty = None
         self.box_size = 3
+        self.player_score = 0
+        self.timer = None
 
         self.player_actions = {
             'p':'pause',
@@ -46,7 +53,29 @@ class GameObject():
                 print(f'Choice {difficulty} is invalid')
 
     def play(self):
-        self.print_field(r.randint(1,len(Location)),r.randint(1,len(Motion)))
+        while self.player_lives > 0:
+            global user_input
+            global active
+            user_input = None
+            
+            if active is True:
+                active = False
+                print(f'Player Lives: {self.player_lives}, Player Score: {self.player_score}')
+                location,motion = r.randint(1,len(Location)),r.randint(1,len(Motion))
+                self.print_field(location,motion)
+
+                p = Thread(target=get_user_input, args=[])
+                p.daemon = True
+                p.start()
+                p.join(self.difficulty)
+                
+                print(f'\nReceived user input: {user_input}')
+                if user_input is None:
+                    print(f'\nWrong Action {user_input}! Decrement Life :(')
+                    print(f'press any key to continue')
+                    self.player_lives -= 1
+
+
 
     def print_field(self, location, motion):
         for i in range(1,4):
@@ -70,3 +99,8 @@ class GameObject():
         output += self.blocks[3]
 
         return output
+
+def get_user_input():
+    global user_input, active
+    user_input = input(f'Type action: q = top, a = middle, z = bottom; j = vertical, k = horizontal: ')
+    active = True
