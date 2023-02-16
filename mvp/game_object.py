@@ -52,6 +52,9 @@ class GameObject():
                 print(f'Choice {difficulty} is invalid')
 
     def play(self):
+        print('TYPE q = top, a = middle, z = bottom FOLLOWED BY j = vertical, k = horizontal THEN PRESS \'ENTER\'')
+        print('INTIALIZING')
+        time.sleep(5)
         while self.player_lives > 0:
             global user_input, active
             user_input = None
@@ -77,6 +80,10 @@ class GameObject():
                         print(f'\nNicely Done! Score Incremented')
                         self.player_score += 1
                         time.sleep(4)
+                    else:
+                        print(f'\nWrong Action {user_input}! Decrement Life :(')
+                        print(f'press any key to continue')
+                        self.player_lives -= 1
 
 
 
