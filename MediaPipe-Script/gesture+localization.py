@@ -66,7 +66,6 @@ def fileToArray(f):
     content=[]
     for line in f:
         content.append(line)
-    print(content)
     return content
 
 def arrayshift(a,newline):
@@ -197,8 +196,8 @@ with mp_holistic.Holistic(
                 wasInBox=True
             else:
                 wasInBox=False
-
-        sendToUnity("gesturefile.txt",recognizegesture,10)
+        data=recognizegesture+','+str(nosex)+ ','+str(nosey)
+        sendToUnity("gesturefile.txt",data,20)
         
     except:
         print("Landmark not found")
