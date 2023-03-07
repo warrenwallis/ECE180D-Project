@@ -145,33 +145,43 @@ with mp_holistic.Holistic(
 
     try:
 
-        #get wrist
+        #get right wrist
         wrist = results.pose_landmarks.landmark[16]
         wristx=int(wrist.x*width)
         wristy=int(wrist.y*height)
 
-        #get elbow
+        #get  right elbow
         elbow = results.pose_landmarks.landmark[14]
         elbowx=int(elbow.x*width)
         elbowy=int(elbow.y*height)
         
-        #get shoulder
-        shoulder = results.pose_landmarks.landmark[12]
-        shoulderx=int(shoulder.x*width)
-        shouldery=int(shoulder.y*height)
-        cv2.putText(image,str(shoulderx),(shoulderx,shouldery),cv2.FONT_HERSHEY_PLAIN,2,(255,0,0),2)
+        #get right shoulder
+        rightshoulder = results.pose_landmarks.landmark[12]
+        rightshoulderx=int(rightshoulder.x*width)
+        rightshouldery=int(rightshoulder.y*height)
+        #cv2.putText(image,str(shoulderx),(shoulderx,shouldery),cv2.FONT_HERSHEY_PLAIN,2,(255,0,0),2)
 
+        #get left shoulder
+        leftshoulder = results.pose_landmarks.landmark[11]
+        leftshoulderx=int(leftshoulder.x*width)
+        leftshouldery=int(leftshoulder.y*height)
+        #cv2.putText(image,str(shoulderx),(shoulderx,shouldery),cv2.FONT_HERSHEY_PLAIN,2,(255,0,0),2)
+
+        #boxdimension
+        boxdimension=int((0.9*abs(leftshoulderx-rightshoulderx))/2)
+        #boxdimension=75
         #box for to check if wrist is in
+
         boxcenter=(elbowx, elbowy)
-        boxleft=(boxcenter[0]-50,boxcenter[1]-50)
-        boxright=(boxcenter[0]+50,boxcenter[1]+50)
+        boxleft=(boxcenter[0]-boxdimension,boxcenter[1]-boxdimension)
+        boxright=(boxcenter[0]+boxdimension,boxcenter[1]+boxdimension)
 
         #get nose
         nose = results.pose_landmarks.landmark[0]
         nosex=int(nose.x*width)
         nosey=int(nose.y*height)
 
-        inBox=inBoxCheck(wristx,wristy,boxcenter,75)
+        inBox=inBoxCheck(wristx,wristy,boxcenter,boxdimension)
         cv2.putText(image,"In Box: " + str(inBox),(10,100),cv2.FONT_HERSHEY_PLAIN,1,(255,0,0),1)
         cv2.putText(image,"Most Recent Gesture: " + directions[previousGesture],(300,100),cv2.FONT_HERSHEY_PLAIN,1,(255,0,0),1)
 
