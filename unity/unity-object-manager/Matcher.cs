@@ -32,6 +32,8 @@ public class Matcher : MonoBehaviour
     private List<Constructs> objects;
     private bool testMode;
     private string outputPath;
+    
+    public List<int> missMatch {get; set;};
 
     // Start is called before the first frame update
     void Start()
@@ -39,7 +41,7 @@ public class Matcher : MonoBehaviour
         testMode = false; // set to True to test module
         outputPath = "/Users/warren_wallis/Documents/GitHub/ChristmasGifts2022/My project/Assets/data.txt"; // change this to the correct output file
         objects = new List<Constructs>(){ new Constructs(DateTime.Parse("16:36:33.09"), 1) }; // create a seed to keep member variable alive
-
+        missMatch = new List<int>(){ 0, 0 };
 
         // 0 = null, 1 = up, 2 = down, 3 = left, 4 = right
         if (testMode)
@@ -60,14 +62,9 @@ public class Matcher : MonoBehaviour
     {
         if (!testMode)
         {
-            List<int> missMatch= Match();
+            List<int> missMatch = Match();
             DeleteConsideredObjects();
         }
-        
-
-        // *****************************************************************************************
-        // KEATON: the missMatch score contains the number of misses and matches found, respectively
-        // *****************************************************************************************
     }
 
     void moduleTest()
@@ -75,7 +72,7 @@ public class Matcher : MonoBehaviour
         Debug.Log("Curerent Objects");
         printObjects(objects);
         
-        List<int> missMatch= Match();
+        List<int> missMatch = Match();
 
         Debug.Log($"MISSED: {missMatch[0]}, MATCHED: {missMatch[1]}");
 
