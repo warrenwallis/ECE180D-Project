@@ -60,6 +60,8 @@ public class Matcher : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        missMatch = new List(){ 0, 0 }; // set missMatch to 0, 0 
+        
         if (!testMode)
         {
             List<int> missMatch = Match();
