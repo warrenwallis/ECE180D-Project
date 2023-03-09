@@ -30,41 +30,63 @@ public class Constructs
 public class Matcher : MonoBehaviour
 {
     private List<Constructs> objects;
+    private bool testMode;
 
     // Start is called before the first frame update
     void Start()
     {
+        testMode = false; // set to True to test module
         objects = new List<Constructs>(){ new Constructs(DateTime.Parse("16:36:33.09"), 1) }; // create a seed to keep member variable alive
+
+
         // 0 = null, 1 = up, 2 = down, 3 = left, 4 = right
-        // objects = new List<Constructs>()
-        // {
-        //     new Constructs(DateTime.Parse("16:36:33.09"), 1),
-        //     new Constructs(DateTime.Parse("16:36:33.69"), 0),
-        //     new Constructs(DateTime.Parse("16:36:34.30"), 3)
-        // };
+        if (testMode)
+        {
+            objects = new List<Constructs>()
+            {
+                new Constructs(DateTime.Parse("16:36:33.09"), 1),
+                new Constructs(DateTime.Parse("16:36:33.69"), 0),
+                new Constructs(DateTime.Parse("16:36:34.30"), 3)
+            };
 
-        
-        // Debug.Log($"Current Index: {object_index}");
-        // Debug.Log("OBJECTS AFTER DELETE");
-        // foreach (var o in objects)
-        //     Debug.Log($"Min Time: {o.Time[0].ToString("hh:mm:ss.fff")}, Max Time: {o.Time[1].ToString("hh:mm:ss.fff")}, Direction: {o.Direction}");
-
-        // Debug.Log("LINE DATA");
-        // foreach (var o in line_data)
-        //     Debug.Log($"Min Time: {o.Time[0].ToString("hh:mm:ss.fff")}, Max Time: {o.Time[1].ToString("hh:mm:ss.fff")}, Direction: {o.Direction}");
-
-        // Debug.Log($"MISSED: {missMatch[0]}, MATCHED: {missMatch[1]}");
+            moduleTest();
+        }
     }
 
     // Update is called once per frame
     void Update()
     {
-        List<int> missMatch= Match();
-        DeleteConsideredObjects();
+        if (!testMode)
+        {
+            List<int> missMatch= Match();
+            DeleteConsideredObjects();
+        }
+        
 
         // *****************************************************************************************
         // KEATON: the missMatch score contains the number of misses and matches found, respectively
         // *****************************************************************************************
+    }
+
+    void moduleTest()
+    {
+        Debug.Log("Curerent Objects");
+        printObjects(objects);
+        
+        List<int> missMatch= Match();
+
+        Debug.Log($"MISSED: {missMatch[0]}, MATCHED: {missMatch[1]}");
+
+        DeleteConsideredObjects();
+
+        Debug.Log("OBJECTS AFTER DELETE");
+        printObjects(objects);
+    }
+
+    void printObjects(List<Constructs> objects) 
+    {
+        foreach (var o in objects)
+            Debug.Log($"Min Time: {o.Time[0].ToString("hh:mm:ss.fff")}, Max Time: {o.Time[1].ToString("hh:mm:ss.fff")}, Direction: {o.Direction}");
     }
 
     // use to add objects from another file
@@ -87,8 +109,12 @@ public class Matcher : MonoBehaviour
 
         foreach (var line in line_data)
         {
-            // Debug.Log($"Current Index: {object_index}");
-            // Debug.Log($"Line Data: {line.Time[0]}, {line.Time[1]}, {line.Direction}");
+            if (testMode)
+            {
+                Debug.Log($"Current Index: {object_index}");
+                Debug.Log($"Line Data: {line.Time[0]}, {line.Time[1]}, {line.Direction}");
+            }
+            
             if (object_index >= objects.Count)
                 break;
             if ((
@@ -97,19 +123,25 @@ public class Matcher : MonoBehaviour
                     (line.Time[0] <= objects[object_index].Time[0] && objects[object_index].Time[0] <= line.Time[1]) // data.min <= obj.min <= data.max
                 ) && objects[object_index].Direction == line.Direction) 
             {
-                // Debug.Log("Matched");
+                if (testMode)
+                    Debug.Log("Matched");
+
                 objects[object_index].Consider = false;
                 object_index++;
                 matched++;
             } 
             else if (line.Time[1] < objects[object_index].Time[0]) // stream is behind time of current object
             {
-                // Debug.Log("Continuing");
+                if (testMode)
+                    Debug.Log("Continuing");
+
                 continue;
             }
             else// set current object to be deleted because current stream is past the time of current object
             {
-                // Debug.Log("Not Matched");
+                if (testMode)
+                    Debug.Log("Not Matched");
+
                 objects[object_index].Consider = false;
                 object_index++;
                 missed++;
