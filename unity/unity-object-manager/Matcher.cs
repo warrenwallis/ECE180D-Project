@@ -31,11 +31,13 @@ public class Matcher : MonoBehaviour
 {
     private List<Constructs> objects;
     private bool testMode;
+    private string outputPath;
 
     // Start is called before the first frame update
     void Start()
     {
         testMode = false; // set to True to test module
+        outputPath = "/Users/warren_wallis/Documents/GitHub/ChristmasGifts2022/My project/Assets/data.txt"; // change this to the correct output file
         objects = new List<Constructs>(){ new Constructs(DateTime.Parse("16:36:33.09"), 1) }; // create a seed to keep member variable alive
 
 
@@ -154,7 +156,7 @@ public class Matcher : MonoBehaviour
     // gets data stream and parses it to be used by Match Function
     List<Constructs> createList()
     {
-        var lines = System.IO.File.ReadAllLines(@"/Users/warren_wallis/Documents/GitHub/ChristmasGifts2022/My project/Assets/data.txt");
+        var lines = System.IO.File.ReadAllLines(@outputPath);
         var line_data = new List<Constructs>();
 
         foreach (var line in lines)
