@@ -33,7 +33,7 @@ public class Matcher : MonoBehaviour
     private bool testMode;
     private string outputPath;
     
-    public List<int> missMatch {get; set;};
+    public List<int> missMatch { get; set; };
 
     // Start is called before the first frame update
     void Start()
