@@ -15,8 +15,8 @@ prevwristx=0
 prevwristy=0
 
 #previousGuesss=np.zeros(7)
-potentialGuess=['other','right','left','up','down']
-directions=['right','left','up','down']
+potentialGuess=['null','right','left','up','down']
+directions=['4','3','1','2']
 previousGesture=0
 
 onleftShoulder=False
@@ -168,8 +168,8 @@ with mp_holistic.Holistic(
         #cv2.putText(image,str(shoulderx),(shoulderx,shouldery),cv2.FONT_HERSHEY_PLAIN,2,(255,0,0),2)
 
         #boxdimension
-        boxdimension=int((0.9*abs(leftshoulderx-rightshoulderx))/2)
-        #boxdimension=75
+        #boxdimension=int((0.9*abs(leftshoulderx-rightshoulderx))/2)
+        boxdimension=75
         #box for to check if wrist is in
 
         boxcenter=(elbowx, elbowy)
