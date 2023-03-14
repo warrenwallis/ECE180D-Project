@@ -33,7 +33,7 @@ public class Matcher : MonoBehaviour
     private bool testMode;
     private string outputPath;
     
-    public List<int> missMatch { get; set; };
+    public List<int> missMatch { get; set; }
 
     // Start is called before the first frame update
     void Start()
@@ -82,7 +82,7 @@ public class Matcher : MonoBehaviour
         printObjects(objects);
     }
 
-    void printObjects(List<Constructs> objects) 
+    public void printObjects(List<Constructs> objects) 
     {
         foreach (var o in objects)
             Debug.Log($"Min Time: {o.Time[0].ToString("hh:mm:ss.fff")}, Max Time: {o.Time[1].ToString("hh:mm:ss.fff")}, Direction: {o.Direction}");
