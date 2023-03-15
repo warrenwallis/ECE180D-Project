@@ -4,7 +4,7 @@ import numpy as np
 import csv
 import datetime
 
-file = open('output_results.txt','w')
+#file = open('output_results.txt','w') dont need this anymore
 
 mp_drawing = mp.solutions.drawing_utils
 mp_drawing_styles = mp.solutions.drawing_styles
@@ -207,7 +207,7 @@ with mp_holistic.Holistic(
             else:
                 wasInBox=False
         data=recognizegesture+','+str(nosex)+ ','+str(nosey)
-        sendToUnity("gesturefile.txt",data,20)
+        sendToUnity("gesturefile.txt",','+ data,30)
         
     except:
         print("Landmark not found")
