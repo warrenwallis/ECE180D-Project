@@ -97,11 +97,11 @@ public class Matcher
     // use to add objects from another file
     public bool addObject(DateTime time, int direction, int count)
     {
-        Construct curr = new Construct(time, direction);
+        Constructs curr = new Constructs(time, direction);
 
-        if (objects[objects.Count - 1].Time[0] == curr.Time[0] && objects[objects.Count - 1].Time[1] == curr.Time[1]) || // data.min == obj.min <= data.max == obj.max
-                    (curr.Time[0] <= objects[objects.Count - 1].Time[1] && objects[objects.Count - 1].Time[1] <= curr.Time[1]) || // data.min <= obj.max <= data.max
-                    (curr.Time[0] <= objects[objects.Count - 1].Time[0] && objects[objects.Count - 1].Time[0] <= curr.Time[1]) // data.min <= obj.min <= data.max
+        if ((objects[objects.Count - 1].Time[0] == curr.Time[0] && objects[objects.Count - 1].Time[1] == curr.Time[1]) || // data.min == obj.min <= data.max == obj.max
+            (curr.Time[0] <= objects[objects.Count - 1].Time[1] && objects[objects.Count - 1].Time[1] <= curr.Time[1]) || // data.min <= obj.max <= data.max
+            (curr.Time[0] <= objects[objects.Count - 1].Time[0] && objects[objects.Count - 1].Time[0] <= curr.Time[1])) // data.min <= obj.min <= data.max
         {
             return false;
         }
@@ -159,7 +159,7 @@ public class Matcher
                 if (testMode)
                     Debug.Log("Not Matched");
 
-                object[object_index].Reason = "Not Matched";
+                objects[object_index].Reason = "Not Matched";
                 objects[object_index].DataAgainst = $"Min: {line.Time[0]}, Max: {line.Time[1]}, Count: {line.Count}";
                 objects[object_index].Consider = false;
                 object_index++;
