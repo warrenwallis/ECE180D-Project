@@ -14,7 +14,7 @@ public class Constructs
     public string Reason { get; set;}
     public string DataAgainst { get; set; } // the datapoint that made the construct invalid
     public int Direction { get; set; }
-    public int Count { get; set}
+    public int Count { get; set; }
     public bool Consider { get; set;}
 
 
@@ -25,7 +25,7 @@ public class Constructs
             time.AddSeconds(-Globals.spawnRate/2), // min time
             time.AddSeconds(Globals.spawnRate/2) // max time
         };
-        ReasonForDeletion = "";
+        Reason = "";
         DataAgainst = "";
         Direction = direction;
         Count = count;
@@ -95,9 +95,19 @@ public class Matcher
     }
 
     // use to add objects from another file
-    public void addObject(DateTime time, int direction, int count)
+    public bool addObject(DateTime time, int direction, int count)
     {
-        objects.Add(new Constructs(time, direction, count));
+        Construct curr = new Construct(time, direction);
+
+        if (objects[objects.Count - 1].Time[0] == curr.Time[0] && objects[objects.Count - 1].Time[1] == curr.Time[1]) || // data.min == obj.min <= data.max == obj.max
+                    (curr.Time[0] <= objects[objects.Count - 1].Time[1] && objects[objects.Count - 1].Time[1] <= curr.Time[1]) || // data.min <= obj.max <= data.max
+                    (curr.Time[0] <= objects[objects.Count - 1].Time[0] && objects[objects.Count - 1].Time[0] <= curr.Time[1]) // data.min <= obj.min <= data.max
+        {
+            return false;
+        }
+
+        objects.Add(curr);
+        return true;
     }
 
     // deletes all objects that have been considered
@@ -131,7 +141,7 @@ public class Matcher
                 if (testMode)
                     Debug.Log("Matched");
 
-                objects[object_index].ReasonForDeletion = "Matched";
+                objects[object_index].Reason = "Matched";
                 objects[object_index].DataAgainst = $"Min: {line.Time[0]}, Max: {line.Time[1]}, Count: {line.Count}";
                 objects[object_index].Consider = false;
                 object_index++;
@@ -149,7 +159,7 @@ public class Matcher
                 if (testMode)
                     Debug.Log("Not Matched");
 
-                object[object_index].ReasonForDeletion = "Not Matched";
+                object[object_index].Reason = "Not Matched";
                 objects[object_index].DataAgainst = $"Min: {line.Time[0]}, Max: {line.Time[1]}, Count: {line.Count}";
                 objects[object_index].Consider = false;
                 object_index++;
@@ -198,15 +208,17 @@ public class Scorer
     }
 
     // Update is called once per frame
-    public voide Update()
+    public void Update()
     {
         match.Update();
         score += match.missMatch[1];
     }
 
-    public void addObject(DateTime time, int direction) {
-        match.addObject(time, direction, count);
+    public bool addObject(DateTime time, int direction) {
+        bool output = match.addObject(time, direction, count);
         total++;
         count++;
+
+        return output;
     }
 }
