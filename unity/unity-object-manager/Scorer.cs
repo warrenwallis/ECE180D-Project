@@ -42,7 +42,7 @@ public class Matcher
     public List<int> missMatch { get; set; }
 
     // Start is called before the first frame update
-    void Start()
+    public Matcher()
     {
         testMode = false; // set to True to test module
         outputPath = "/Users/warren_wallis/Documents/GitHub/ChristmasGifts2022/My project/Assets/data.txt"; // change this to the correct output file
@@ -64,7 +64,7 @@ public class Matcher
     }
 
     // Update is called once per frame
-    void Update()
+    public void Update()
     {
         if (!testMode)
         {
@@ -189,7 +189,7 @@ public class Scorer
     public int count { get; set; }
 
     // Start is called before the first frame update
-    void Start()
+    public Scorer()
     {
         match = new Matcher();
         total = 0;
@@ -198,8 +198,9 @@ public class Scorer
     }
 
     // Update is called once per frame
-    void Update()
+    public voide Update()
     {
+        match.Update();
         score += match.missMatch[1];
     }
 
