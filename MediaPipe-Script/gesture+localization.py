@@ -37,8 +37,8 @@ def inBoxCheck(x,y,boxlocation,boxdimension):
 def directionLeftBoxIn(x,y,boxlocation,boxdimension):
     diffx=boxcenter[0]-x
     diffy=boxcenter[1]-y
-    print("y: " +str(diffy))
-    print("x: " +str(diffx))
+    #print("y: " +str(diffy))
+    #print("x: " +str(diffx))
     if abs(diffx)>boxdimension and abs(diffy)>boxdimension:
         return -1
     if diffx<=0:
@@ -79,12 +79,15 @@ def arraytostring(a):
     return string
 
 def sendToUnity(filename,data,buffersize):
-    currTime=str(datetime.datetime.now())
-    datapacket='['+currTime+']'+str(data)+'\n'
+    #remove time from this section and include to the call, so could be faster?
+    #currTime=str(datetime.datetime.now())
+    #datapacket='['+currTime+']'+str(data)+'\n'
+    datapacket=data
     sent=False
     while not sent:
         try:
             fil = open(filename, "r+")
+            file_append = open('file_append.txt', 'a')
         except:
             print("Couldn't Access File, Trying to send again!")
             continue
@@ -99,12 +102,14 @@ def sendToUnity(filename,data,buffersize):
             fil.seek(0)
             fil.truncate(0)
             fil.write(newtext)
+        file_append.write(datapacket)
+        file_append.close()
         fil.close()
         sent=True   
 
-#file for gesture
+#file for gesture so it clears it
 open("gesturefile.txt", "w").close()
-
+open("file_append.txt", "w").close()
 
 
 # For webcam input:
@@ -112,6 +117,7 @@ cap = cv2.VideoCapture(0)
 #cap.set(3, 640)
 #cap.set(4, 420)
 
+dataindex=0
 with mp_holistic.Holistic(
     min_detection_confidence=0.5,
     min_tracking_confidence=0.5) as holistic:
@@ -135,12 +141,15 @@ with mp_holistic.Holistic(
     # Draw landmark annotation on the image.
     image.flags.writeable = True
     image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
-    mp_drawing.draw_landmarks(
-        image,
-        results.pose_landmarks,
-        mp_holistic.POSE_CONNECTIONS,
-        landmark_drawing_spec=mp_drawing_styles
-        .get_default_pose_landmarks_style())
+
+    # commneted out this code in attempt to make it run faster
+
+    # mp_drawing.draw_landmarks(
+    #     image,
+    #     results.pose_landmarks,
+    #     mp_holistic.POSE_CONNECTIONS,
+    #     landmark_drawing_spec=mp_drawing_styles
+    #     .get_default_pose_landmarks_style())
     
 
     try:
@@ -156,15 +165,15 @@ with mp_holistic.Holistic(
         elbowy=int(elbow.y*height)
         
         #get right shoulder
-        rightshoulder = results.pose_landmarks.landmark[12]
-        rightshoulderx=int(rightshoulder.x*width)
-        rightshouldery=int(rightshoulder.y*height)
+        # rightshoulder = results.pose_landmarks.landmark[12]
+        # rightshoulderx=int(rightshoulder.x*width)
+        # rightshouldery=int(rightshoulder.y*height)
         #cv2.putText(image,str(shoulderx),(shoulderx,shouldery),cv2.FONT_HERSHEY_PLAIN,2,(255,0,0),2)
 
         #get left shoulder
-        leftshoulder = results.pose_landmarks.landmark[11]
-        leftshoulderx=int(leftshoulder.x*width)
-        leftshouldery=int(leftshoulder.y*height)
+        # leftshoulder = results.pose_landmarks.landmark[11]
+        # leftshoulderx=int(leftshoulder.x*width)
+        # leftshouldery=int(leftshoulder.y*height)
         #cv2.putText(image,str(shoulderx),(shoulderx,shouldery),cv2.FONT_HERSHEY_PLAIN,2,(255,0,0),2)
 
         #boxdimension
@@ -182,23 +191,23 @@ with mp_holistic.Holistic(
         nosey=int(nose.y*height)
 
         inBox=inBoxCheck(wristx,wristy,boxcenter,boxdimension)
-        cv2.putText(image,"In Box: " + str(inBox),(10,100),cv2.FONT_HERSHEY_PLAIN,1,(255,0,0),1)
-        cv2.putText(image,"Most Recent Gesture: " + directions[previousGesture],(300,100),cv2.FONT_HERSHEY_PLAIN,1,(255,0,0),1)
+        #cv2.putText(image,"In Box: " + str(inBox),(10,100),cv2.FONT_HERSHEY_PLAIN,1,(255,0,0),1)
+        #cv2.putText(image,"Most Recent Gesture: " + directions[previousGesture],(300,100),cv2.FONT_HERSHEY_PLAIN,1,(255,0,0),1)
 
         if wasInBox or firstRun:  
             if firstRun:
                 firstRun=False
             if not inBox:
                 direction = directionLeftBoxIn(wristx,wristy,boxcenter,75)
-                print(direction)
+                #print(direction)
                 wasInBox=False
                 if direction ==-1:
-                    cv2.putText(image,"Gesture: Other ",(300,100),cv2.FONT_HERSHEY_PLAIN,1,(255,0,0),1)
+                    #cv2.putText(image,"Gesture: Other ",(300,100),cv2.FONT_HERSHEY_PLAIN,1,(255,0,0),1)
+                    pass
                 else:
                     previousGesture=direction
-                    cv2.putText(image,"Gesture: " + directions[direction],(300,100),cv2.FONT_HERSHEY_PLAIN,1,(255,0,0),1)
+                    #cv2.putText(image,"Gesture: " + directions[direction],(300,100),cv2.FONT_HERSHEY_PLAIN,1,(255,0,0),1)
                     recognizegesture=directions[direction]
-
             else:
                 wasInBox = True      
         else:
@@ -207,7 +216,12 @@ with mp_holistic.Holistic(
             else:
                 wasInBox=False
         data=recognizegesture+','+str(nosex)+ ','+str(nosey)
-        sendToUnity("gesturefile.txt",','+ data,30)
+        ##changed to buffer to 3 for my version
+        ##added time here to make it potentialllt more accurate time
+        dataindex+=1
+        currTime=str(datetime.datetime.now())
+        datapacket='['+currTime+'],'+str(data)+","+str(dataindex)+'\n'
+        sendToUnity("gesturefile.txt",datapacket,20)
         
     except:
         print("Landmark not found")
@@ -220,8 +234,9 @@ with mp_holistic.Holistic(
     except:
         print("Box Dimensions out of Range")
         pass
-  
-    cv2.imshow('MediaPipe Holistic', image)
+    flippedimage =cv2.flip(image, 1)
+    cv2.putText(flippedimage,"Most Recent Gesture: " + directions[previousGesture],(300,100),cv2.FONT_HERSHEY_PLAIN,1,(255,0,0),1)
+    cv2.imshow('MediaPipe Holistic', flippedimage)
 
     if cv2.waitKey(5) & 0xFF == 27:
       break

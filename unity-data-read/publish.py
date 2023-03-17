@@ -10,11 +10,8 @@ def fileToArray(f):
     return content
 
 def arrayshift(a,newline):
-    length=len(a)
-    for i in range(0,length-1):
-        a[i]=a[i+1]
-    a[length-1]=newline
-    return a
+    a.append(newline)
+    return a[1:]
 
 def arraytostring(a):
     string=''
