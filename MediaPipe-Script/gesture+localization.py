@@ -132,6 +132,8 @@ with mp_holistic.Holistic(
 
     width  = cap.get(3)  # float `width`
     height = cap.get(4) 
+    #print("width:" +str(width))
+    #print("h:" +str(height))
     # To improve performance, optionally mark the image as not writeable to
     # pass by reference.
     image.flags.writeable = False
@@ -221,7 +223,7 @@ with mp_holistic.Holistic(
         dataindex+=1
         currTime=str(datetime.datetime.now())
         datapacket='['+currTime+'],'+str(data)+","+str(dataindex)+'\n'
-        sendToUnity("gesturefile.txt",datapacket,20)
+        sendToUnity("gesturefile.txt",datapacket,40)
         
     except:
         print("Landmark not found")
@@ -236,7 +238,15 @@ with mp_holistic.Holistic(
         pass
     flippedimage =cv2.flip(image, 1)
     cv2.putText(flippedimage,"Most Recent Gesture: " + directions[previousGesture],(300,100),cv2.FONT_HERSHEY_PLAIN,1,(255,0,0),1)
-    cv2.imshow('MediaPipe Holistic', flippedimage)
+    scale_percent = 60 # percent of original size
+    widthscaled = int(width * scale_percent / 100)
+    heightscaled = int(height * scale_percent / 100)
+    dim = (widthscaled, heightscaled)
+  
+    # resize image
+    resized = cv2.resize(flippedimage, dim, interpolation = cv2.INTER_AREA)
+    cv2.imshow('MediaPipe Holistic', resized)
+    #cv2.resizeWindow("MediaPipe Holistic", int(width/2),int(height/2))
 
     if cv2.waitKey(5) & 0xFF == 27:
       break

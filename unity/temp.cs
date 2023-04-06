@@ -5,7 +5,7 @@ using System;
 
 public static class Globals
 {
-    public const double spawnRate = 0.12;
+    public const double spawnRate = 0.19;
 }
 
 public class Constructs
