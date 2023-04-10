@@ -200,7 +200,7 @@ with mp_holistic.Holistic(
             if firstRun:
                 firstRun=False
             if not inBox:
-                direction = directionLeftBoxIn(wristx,wristy,boxcenter,75)
+                direction = directionLeftBoxIn(wristx,wristy,boxcenter,boxdimension)
                 #print(direction)
                 wasInBox=False
                 if direction ==-1:
